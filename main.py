@@ -4,35 +4,19 @@ from formulario import formularioObs
 from procurarCliente import procurarCliente
 from listarObs import listarObs
 from verObs import visualizarObs
+from topbar import topbar
+from layout import layout
+from bancodedados import *
+from cadastrarPessoas import formularioCadastrarPessoa
+from listarPessoas import listarPessoas
 
 app,rt = fast_app()
 
-class Cliente:
-    def __init__(self, nome: str, codigo: int):
-        self.nome = nome
-        self.codigo = codigo
 
-cliente1 = Cliente(codigo=1, nome='cliente teste')
-
-clientes = [cliente1]
-
-class Obs:
-    def __init__(self, data, cliente: str, codigo: int, status: str, itens: str, solicitante: str, motorista: str):
-        self.data = data
-        self.codigo = codigo
-        self.status = status
-        self.cliente = cliente
-        self.itens = itens
-        self.solicitante = solicitante
-        self.motorista = motorista
-
-obs1 = Obs(data='24/02/2025', status='Pedente', cliente='Cliente teste', codigo= 1, itens='Item de teste', solicitante='soliciante teste', motorista='teste')
-
-obs=[obs1]
 
 
 @rt('/')
-def get(): return listarObs()
+def get(): return layout()
 
 
 @rt('/adicionaritem')
@@ -53,16 +37,56 @@ def removerItem(number: int):
 
 @rt('/criarobs')
 def criarObs(codigoCliente: int):
-    for i in clientes:
-        if i.codigo == codigoCliente:
-            return formularioObs(i)
+    cliente = Clientes.get(Clientes.codigo == codigoCliente)
+    pessoas = Pessoas.select()
+    if cliente:
+        return formularioObs(cliente, pessoas)
     return procurarCliente()
 
-@rt('/visualizarObs/{obsCodigo}')
-def visualizarObs(obsCodigo: int):
-    for i in obs:
-        if i.codigo == obsCodigo:
-            return visualizarObs(i)
+@rt('/cadastrarobs')
+def cadastrarobs(codigoCliente: int, cliente: str, motorista: str, solicitante: str, picote: str, data: str):
+    print(codigoCliente)
+    return '1'
+
+
+@rt('/pessoas')
+def pessoas():
+    listagem = Pessoas.select()
+    return layout(listarPessoas(listagem))
+
+@rt('/cadastrarpessoas')
+def cadastrarPessoas():
+    return layout(formularioCadastrarPessoa())
+
+@rt('/cadastrarpessoa')
+def cadastrarPessoa(nomePessoa: str, cargoPessoa: str):
+    nova_pessoa = Pessoas(nome=nomePessoa, cargo=cargoPessoa)
+    nova_pessoa.save()
+    return formularioCadastrarPessoa()
+
+@rt('/deletarpessoa/{pessoaID}')
+def deletarpessoa(pessoaID: int):
+    pessoa = Pessoas.get(Pessoas.id==pessoaID)
+    if pessoa:
+        pessoa.delete_instance()
+        listagem = Pessoas.select()
+        return listarPessoas(listagem)
+    return 'error'
+
+@rt('/procurarcliente')
+def procurarcliente():
+    return layout(procurarCliente())
+
+@rt('/verobs/{codigoobs}')
+def verobs(codigoobs: int):
+    obs = Obs.get(Obs.codigo == codigoobs)
+    if obs:
+        return visualizarObs(obs)
     return listarObs()
+
+@rt('/listaobs')
+def listaObs():
+    listagem = Obs.select()
+    return layout(listarObs(listagem))
 
 serve()

@@ -1,32 +1,33 @@
 from fasthtml.common import *
 
-class Obs:
-    def __init__(self, data, cliente: str, codigo: int, status: str, itens: str, solicitante: str, motorista: str):
-        self.data = data
-        self.codigo = codigo
-        self.status = status
-        self.cliente = cliente
-        self.itens = itens
-        self.solicitante = solicitante
-        self.motorista = motorista
+def formatarData(a):
+    return a.strftime("%d/%m/%Y")
 
-obs1 = Obs(data='24/02/2025', status='Pedente', cliente='Cliente teste', codigo= 1, itens='Item de teste', solicitante='soliciante teste', motorista='teste')
+def emoji(a):
+    if a == False:
+        return '⚠️'
+    else:
+        return '✅'
 
-obs=[obs1]
-
-def listarObs():
+def listarObs(obs):
     return Div(Table(
         Thead(
             Tr( Th("Data"),
-                Th("Data"),
                 Th("Cliente"),
+                Th("Picote"),
                 Th("Status"),
-                Th("Ação")
+                Th("U. Atu."),
+                Th("Ação"), 
             )
         ),
         Tbody(
-            *[Tr(Td(obs.data), Td(obs.cliente), Td(obs.status), Td(Form(method="get", hx_get=f"/visualizarObs/{obs.codigo}", hx_target='#listarobss', hx_swap='innerHTML'), 
-            Button('Abrir', type='submit'))) for obs in obs]
+            *[Tr(Td(formatarData(obs.data)), Td(obs.cliente), Td(obs.picote),  
+            Td((emoji(obs.status))
+            ), Td(formatarData(obs.ultimaAtualizacao)),
+            Td(Div(Form(method="get", action=f"/verobs/{obs.codigo}", id='tela', hx_get=f'/verobs/{obs.codigo}', hx_target='#conteudo', hx_swap='InnerHTML')(
+        Fieldset(
+            Label(Button('Abrir',type='submit')),
+        ))))) for obs in obs]
         ),
         cls="striped"
-    ), id='listarobss')
+    ), id='listarobs',  style='text-align: center;')

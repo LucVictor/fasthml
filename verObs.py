@@ -7,7 +7,7 @@ def visualizarObs(i):
         Fieldset(
             Label('Cliente', Input(type="text", value=f'{i.cliente}')),
             Label("Motorista", Input(type="text", value=f'{i.motorista}')),
-            Label("Solicitante", Input(type="text", value=f'{i.soliciante}')),
+            Label("Solicitante", Input(type="text", value=f'{i.solicitante}')),
             Label('Data da ocorrência', Input(type='date', value=f'{i.data}'))
 
         ),
