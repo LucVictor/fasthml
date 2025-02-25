@@ -43,10 +43,13 @@ def criarObs(codigoCliente: int):
         return formularioObs(cliente, pessoas)
     return procurarCliente()
 
-@rt('/cadastrarobs')
-def cadastrarobs(codigoCliente: int, cliente: str, motorista: str, solicitante: str, picote: str, data: str):
-    print(codigoCliente)
-    return '1'
+@rt('/cadastrarobs/')
+def cadastrarobs(motorista:str, codigoCliente:str, picote:str, data:str, solicitante:str, numeroPedido:int ):
+    cliente = Clientes(Clientes.codigo == codigoCliente)
+    nova_obs = Obs(codigo=123, data = data, cliente=cliente.nome, picote=picote, data=data, status=False, 
+    solicitante=solicitante, motorista=motorista, numeroPedido=numeroPedido, usuario='teste', 
+    ultimaAtualizacao=data, codigo=1)
+    return procurarCliente()
 
 
 @rt('/pessoas')
