@@ -18,7 +18,7 @@ class Pessoas(Model):
         database = db 
 
 class Obs(Model):
-    codigo = IntegerField()
+    codigo = AutoField()
     data = DateField()
     cliente = CharField()
     codigoCliente = IntegerField()
@@ -34,7 +34,7 @@ class Obs(Model):
         database = db
 
 class Itens(Model):
-    codigo = IntegerField()
+    codigo = AutoField()
     codigoObs = IntegerField()
     nome = CharField()
     quantidade = IntegerField()

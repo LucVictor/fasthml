@@ -44,12 +44,12 @@ def criarObs(codigoCliente: int):
     return procurarCliente()
 
 @rt('/cadastrarobs/')
-def cadastrarobs(motorista:str, codigoCliente:str, picote:str, data:str, solicitante:str, numeroPedido:int ):
-    cliente = Clientes(Clientes.codigo == codigoCliente)
-    nova_obs = Obs(codigo=123, data = data, cliente=cliente.nome, picote=picote, data=data, status=False, 
-    solicitante=solicitante, motorista=motorista, numeroPedido=numeroPedido, usuario='teste', 
-    ultimaAtualizacao=data, codigo=1)
-    return procurarCliente()
+def cadastrarobs(motorista:str, codigoCliente:int, picote:str, data:str, solicitante:str, numeroPedido:int ):
+    procurar_cliente = Clientes.get(Clientes.codigo == codigoCliente)
+    nova_obs = Obs(data = data, cliente=procurar_cliente.nome, codigoCliente=codigoCliente, picote=picote, status=False, 
+    solicitante=solicitante, motorista=motorista, numeroPedido=numeroPedido, usuario='teste', ultimaAtualizacao=data)
+    nova_obs.save()
+    return Redirect("/listaobs")
 
 
 @rt('/pessoas')
