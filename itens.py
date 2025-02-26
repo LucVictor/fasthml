@@ -1,39 +1,50 @@
 from fasthtml.common import *
 
 
-class Produto:
-    def __init__(self, nome: str, codigo: int, status: str, quantidade: int):
-        self.nome = nome
-        self.codigo = codigo
-        self.status = status
-        self.quantidade = quantidade
-produto1 = Produto(nome='teste', codigo=1, status='Recolher', quantidade=1)
-produto2 =  Produto(nome='teste', codigo=2, status='Entregar', quantidade=2)
-itens = [produto1, produto2]
 
-def mostrarItens():
+def mostrarItens_obs(itens):
+    return Div(H3("Itens:"), Table(
+        Thead(
+            Tr(
+                Th("Nome"),
+                Th("Quantidade"),
+                Th("Status"),
+                Th("Quantidade")
+            )
+        ),
+        Tbody(
+            *[Tr(Td(item.nome), Td(item.quantidade), Td(item.status), Td(item.motivo)) for item in itens]
+        ),
+        cls="striped", id='tabelaitens'
+    ), style="text-align: center;")
+
+def mostrarItens(itens):
     return Table(
         Thead(
             Tr(
-                Th("Código"),
                 Th("Nome"),
-                Th("Ação"),
+                Th("Quantidade"),
+                Th("Status"),
                 Th("Quantidade"),
                 Th("Apagar")
             )
         ),
         Tbody(
-            *[Tr(Td(item.codigo), Td(item.nome), Td(item.status), Td(item.quantidade), Td(Form(method="post", action=f"/removerItem/{item.codigo}"), 
+            *[Tr(Td(item.nome), Td(item.quantidade), Td(item.status), Td(item.motivo) ,  Td(Form(method="post", action=f"/removerItem/{item.codigo}"), 
             Button('Apagar', type='submit'), hx_post=f"/removerItem/{item.codigo}", hx_target='#tabelaitens' )) for item in itens]
         ),
-        cls="striped"
+        cls="striped", id='tabelaitens'
     )
 
 
-def controleItensObs():
-    return Div(Form(method="post", hx_post="/adicionaritem", hx_target='#itens')
-    (Fieldset(Label("Código:", Input(type="number")), Label("Quantidade:", Input(type="number"), Label("Recolher ou Entregar:"), 
-    Select(Option("📄 Papel", value="papel"), Option("🧴 Plástico", value="plastico"), Option("🍾 Vidro", value="vidro"), Option("🥫 Metal", value="metal")) ), 
-    Div(mostrarItens(), id='tabelaitens'))))
+
+def controleItensObs(obs):
+    return Div(H3("Adicionar Item"),Form(method="post", hx_post=f"/adicionaritem", hx_target='#tabelaitens', hx_swap="InnerHtml")
+    (Fieldset(Label("Código:", Input(type="number", name="codigodoproduto")),
+     Label("Quantidade:", Input(type="number", name="quantidade"), style="grid-column: 2;"),
+     Label("Motivo:", Select(Option("Vencido", value="Vencido"), Option("Falta", value="Falta"), name="motivo", style='width: 10rem;' ), style="grid-column: 1 ;place-self: center"),
+     Label("Status:", Select(Option("Entregar", value="Entregar"), Option("Recolher", value="Recolher"), name="status", style='width: 10rem;' ), style="grid-column: 2 ;place-self: center"),
+    Input(name="codigoobs",value=f"{obs.codigo}", style="display:none"), Button("Adicionar", type="submit", style="grid-column: 1 / span 2;")
+    ,style="grid-template-columns: repeat(2, 3fr); gap: 20px; align-items: center;") ), style="text-align: center; border: white solid; display: grid;")
 
 

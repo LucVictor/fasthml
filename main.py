@@ -20,12 +20,12 @@ def get(): return layout()
 
 
 @rt('/adicionaritem')
-def adicionarItem(number: int):
-    for i in itens:
-        if i.codigo == number:
-            itens.append(i)
-            return mostrarItens()
-    return mostrarItens()
+def adicionarItem(codigodoproduto: int, codigoobs: int, quantidade: int, status: str, motivo: str):
+    produto = Produto.get(Produto.codigo == codigodoproduto)
+    novo_item = Itens(nome = produto.nome, codigoObs= codigoobs, quantidade=quantidade, status=status, motivo=motivo )
+    novo_item.save()
+    itens_lista= Itens.select().where(Itens.codigoObs == codigoobs)
+    return mostrarItens(itens_lista)
 
 @rt('/removerItem/{number}')
 def removerItem(number: int):
@@ -83,8 +83,11 @@ def procurarcliente():
 @rt('/verobs/{codigoobs}')
 def verobs(codigoobs: int):
     obs = Obs.get(Obs.codigo == codigoobs)
+    codigocliente = obs.codigoCliente
+    cliente = Clientes.get(Clientes.codigo == codigocliente)
+    itens_lista= Itens.select().where(Itens.codigoObs == codigoobs)
     if obs:
-        return visualizarObs(obs)
+        return visualizarObs(obs, cliente, itens_lista)
     return listarObs()
 
 @rt('/listaobs')
@@ -92,4 +95,4 @@ def listaObs():
     listagem = Obs.select()
     return layout(listarObs(listagem))
 
-serve()
+serve(port=5000)
