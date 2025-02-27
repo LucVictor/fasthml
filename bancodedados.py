@@ -52,8 +52,8 @@ class Clientes(Model):
     cnpj =  CharField()
     rua = CharField()
     numero = CharField()
-    Bairro = CharField()
-    Cidade = CharField()
+    bairro = CharField()
+    cidade = CharField()
     motivo = CharField()
     
     class Meta:

@@ -1,5 +1,5 @@
 from fasthtml.common import *
-from itens import mostrarItens, controleItensObs
+from itens import mostrarItens
 from formulario import formularioObs
 from procurarCliente import procurarCliente
 from listarObs import listarObs
@@ -9,8 +9,9 @@ from layout import layout
 from bancodedados import *
 from cadastrarPessoas import formularioCadastrarPessoa
 from listarPessoas import listarPessoas
+from gerenciaritens import formAdicionarItens
 
-app,rt = fast_app()
+app,rt = fast_app(live=True)
 
 
 
@@ -26,6 +27,11 @@ def adicionarItem(codigodoproduto: int, codigoobs: int, quantidade: int, status:
     novo_item.save()
     itens_lista= Itens.select().where(Itens.codigoObs == codigoobs)
     return mostrarItens(itens_lista)
+
+@rt('/gerenciaritens/{codigoobs}')
+def gerenciaritens(codigoobs: int):
+    return formAdicionarItens(codigoobs)
+
 
 @rt('/removerItem/{number}')
 def removerItem(number: int):
@@ -82,13 +88,7 @@ def procurarcliente():
 
 @rt('/verobs/{codigoobs}')
 def verobs(codigoobs: int):
-    obs = Obs.get(Obs.codigo == codigoobs)
-    codigocliente = obs.codigoCliente
-    cliente = Clientes.get(Clientes.codigo == codigocliente)
-    itens_lista= Itens.select().where(Itens.codigoObs == codigoobs)
-    if obs:
-        return visualizarObs(obs, cliente, itens_lista)
-    return listarObs()
+    return visualizarObs(codigoobs)
 
 @rt('/listaobs')
 def listaObs():

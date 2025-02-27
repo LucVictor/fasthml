@@ -9,7 +9,7 @@ def mostrarItens_obs(itens):
                 Th("Nome"),
                 Th("Quantidade"),
                 Th("Status"),
-                Th("Quantidade")
+                Th("Motivo")
             )
         ),
         Tbody(
@@ -25,7 +25,7 @@ def mostrarItens(itens):
                 Th("Nome"),
                 Th("Quantidade"),
                 Th("Status"),
-                Th("Quantidade"),
+                Th("Motivo"),
                 Th("Apagar")
             )
         ),
@@ -36,15 +36,5 @@ def mostrarItens(itens):
         cls="striped", id='tabelaitens'
     )
 
-
-
-def controleItensObs(obs):
-    return Div(H3("Adicionar Item"),Form(method="post", hx_post=f"/adicionaritem", hx_target='#tabelaitens', hx_swap="InnerHtml")
-    (Fieldset(Label("Código:", Input(type="number", name="codigodoproduto")),
-     Label("Quantidade:", Input(type="number", name="quantidade"), style="grid-column: 2;"),
-     Label("Motivo:", Select(Option("Vencido", value="Vencido"), Option("Falta", value="Falta"), name="motivo", style='width: 10rem;' ), style="grid-column: 1 ;place-self: center"),
-     Label("Status:", Select(Option("Entregar", value="Entregar"), Option("Recolher", value="Recolher"), name="status", style='width: 10rem;' ), style="grid-column: 2 ;place-self: center"),
-    Input(name="codigoobs",value=f"{obs.codigo}", style="display:none"), Button("Adicionar", type="submit", style="grid-column: 1 / span 2;")
-    ,style="grid-template-columns: repeat(2, 3fr); gap: 20px; align-items: center;") ), style="text-align: center; border: white solid; display: grid;")
 
 
