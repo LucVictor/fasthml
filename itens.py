@@ -13,7 +13,7 @@ def mostrarItens_obs(itens):
             )
         ),
         Tbody(
-            *[Tr(Td(item.nome), Td(item.quantidade), Td(item.status), Td(item.motivo)) for item in itens]
+            *[Tr(Td(item.nome, style="text-align: center;"), Td(item.quantidade, style="text-align: center;"), Td(item.status, style="text-align: center;"), Td(item.motivo, style="text-align: center;")) for item in itens]
         ),
         cls="striped", id='tabelaitens'
     ), style="text-align: center;")

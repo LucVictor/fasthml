@@ -1,33 +1,53 @@
 from fasthtml.common import *
+from impressaoObs import botaoImpressaoObs
 
 def formatarData(a):
     return a.strftime("%d/%m/%Y")
 
 def emoji(a):
     if a == False:
-        return '⚠️'
+        return 'Pendente ⚠️'
     else:
-        return '✅'
+        return 'Concluído✅'
+
+
+def filtroObsConcluida():
+    return Div(Form(method="get", action="/filtrarobs/True", hx_get="/filtrarobs/True", hx_swap="InnerHTML", hx_target="#listarobs")(Fieldset(
+        Button("Concluidas ✅", type="submit", style="background-color: green;  border: none"))), style="margin:0 auto; grid-column: 2; grid-row: 1; width: 150px")
+
+
+def filtroObsPedente():
+    return Div(Form(method="get", action="/filtrarobs/False ", hx_get="/filtrarobs/False", hx_swap="InnerHTML", hx_target="#listarobs")(Fieldset(
+        Button("Pendentes ⚠️",  type="submit", style="background-color: #FFCC00; border: none")
+    )),  style="margin:0 auto; grid-column: 1; grid-row: 1; width: 150px")
+
+def filtroObsTodos():
+    return Div(Form(method="get", action="/filtrarobs/Todos ", hx_get="/filtrarobs/Todos", hx_swap="InnerHTML", hx_target="#listarobs")(Fieldset(
+        Button("Todos ✅⚠️",  type="submit", style="")
+    )),  style="margin:0 auto; grid-column: 3; grid-row: 1; width: 150px")
+
+
+def filtrarObsStatus():
+    return Div(H3("Filtro Rápido"), Div(filtroObsTodos(), filtroObsPedente(), filtroObsConcluida(), style="display: grid; gap: 1rem"),
+     style="width: 100%; text-align: center")
 
 def listarObs(obs):
-    return Div(Table(
+    return Div(H3("Lista de OBS"), Div(Table(
         Thead(
-            Tr( Th("Data"),
-                Th("Cliente"),
-                Th("Picote"),
-                Th("Status"),
-                Th("U. Atu."),
-                Th("Ação"), 
+            Tr( Th("Data", style="width: 100px; text-align: center;"),
+                Th("Razão", style="text-align: center;"),
+                Th("Picote Preso?", style="text-align: center;"),
+                Th("Status", style="text-align: center;"),
+                Th("Ação", style="width: 200px; text-align: center;")
             )
         ),
         Tbody(
-            *[Tr(Td(formatarData(obs.data)), Td(obs.cliente), Td(obs.picote),  
-            Td((emoji(obs.status))
-            ), Td(formatarData(obs.ultimaAtualizacao)),
+            *[Tr(Td(formatarData(obs.data), style="text-align: center;"), Td(obs.cliente, style="text-align: center;"), Td(obs.picote, style="text-align: center;"),  
+            Td((emoji(obs.status)), style="text-align: center;"
+            ),
             Td(Div(Form(method="get", action=f"/verobs/{obs.codigo}", id='tela', hx_get=f'/verobs/{obs.codigo}', hx_target='#conteudo', hx_swap='InnerHTML')(
         Fieldset(
-            Label(Button('Abrir',type='submit')),
-        ))))) for obs in obs]
+            Label(Button('Abrir',type='submit', style="width: 80px; margin-right: 3px;")),
+        ))), botaoImpressaoObs(obs.codigo), style="display: flex;align-content:center, align-self: center, justify-content: center"), ) for obs in obs]
         ),
-        cls="striped"
-    ), id='listarobs',  style='text-align: center;')
+        cls="striped"), style="font-size: 14px; margin: 0 auto"), style="text-align: center", id='listarobs')

@@ -3,6 +3,7 @@ from datetime import date
 
 db = SqliteDatabase('banco.db')
 
+
 class Produto(Model):
     codigo = IntegerField()
     nome = CharField()
@@ -54,7 +55,7 @@ class Clientes(Model):
     numero = CharField()
     bairro = CharField()
     cidade = CharField()
-    motivo = CharField()
+
     
     class Meta:
         database = db
