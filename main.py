@@ -11,7 +11,7 @@ from cadastrarPessoas import formularioCadastrarPessoa
 from listarPessoas import listarPessoas
 from gerenciaritens import formAdicionarItens
 from impressaoObs import impressaoObs
-
+from procurarobs import formprocurarObs, listarObsProcurar
 
 app,rt = fast_app(live=True, hdrs=(Style("""
         @media print {
@@ -107,19 +107,57 @@ def verobs(codigoobs: int):
 
 @rt('/listaobs')
 def listaObs():
-    listagem = Obs.select().where(Obs.status==False).orde
-    return layout(Div(filtrarObsStatus(), listarObs(listagem)))
+    pagina = 1
+    por_pagina = 5
+    offset = (pagina - 1) * por_pagina
+    listagem = Obs.select().where(Obs.status==False).limit(por_pagina).offset(offset)
+    return layout(Div( listarObs(listagem, pagina)))
+
+@rt("/obs/{pagina}")
+def listar_Clientes(pagina: int):
+    por_pagina = 5
+    offset = (pagina - 1) * por_pagina
+    listagem = Obs.select().where(Obs.status==False).limit(por_pagina).offset(offset)
+    return listarObs(listagem, pagina)
+
 
 @rt('/filtrarobs/{opcao}')
 def filtrarobs(opcao: str):
-    if opcao == 'Todos':
-        filtro = Obs.select()
-        return listarObs(filtro)      
-    filtro = Obs.select().where(Obs.status==bool(opcao))
+    match opcao:
+        case 'Todos':
+            filtro = Obs.select()
+            return listarObs(filtro)
+        case 'False':
+            filtro = Obs.select().where(Obs.status==bool(False))
+            return listarObs(filtro)
+    filtro = Obs.select().where(Obs.status==bool(True))
     return listarObs(filtro)
-
 
 @rt('/impressaoobs/{id}')
 def imprimirobs(id: int): 
     return impressaoObs(id)
+
+@rt('/procurarobs')
+def procurarobs():
+    return layout(formprocurarObs())
+
+@rt('/resultadoprocurarobs')
+def resultadoprocurarobs(codigodocliente: str, data: str, status: str):
+    obs = Obs.select()
+    print(codigodocliente, data, status)
+    if codigodocliente:
+        obs = obs.select().where(Obs.codigoCliente==codigodocliente)
+    if data:
+        obs = obs.select().where(Obs.data==data)
+    if status:
+        match status:
+            case 'False':
+                obs = obs.select().where(Obs.status == False)
+            case 'True':
+                obs = obs.select().where(Obs.status == True)
+    return listarObsProcurar(obs)
+
+
+
+
 serve(port=5000)

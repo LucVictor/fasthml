@@ -29,10 +29,10 @@ def filtroObsTodos():
 
 def filtrarObsStatus():
     return Div(H3("Filtro Rápido"), Div(filtroObsTodos(), filtroObsPedente(), filtroObsConcluida(), style="display: grid; gap: 1rem"),
-     style="width: 100%; text-align: center")
+     style="width: 100%; text-align: center; border: grey solid 1px;")
 
-def listarObs(obs):
-    return Div(H3("Lista de OBS"), Div(Table(
+def listarObs(obs, pagina):
+    return Div(H3("OBS pendentes:"), Div(Table(
         Thead(
             Tr( Th("Data", style="width: 100px; text-align: center;"),
                 Th("Razão", style="text-align: center;"),
@@ -50,4 +50,12 @@ def listarObs(obs):
             Label(Button('Abrir',type='submit', style="width: 80px; margin-right: 3px;")),
         ))), botaoImpressaoObs(obs.codigo), style="display: flex;align-content:center, align-self: center, justify-content: center"), ) for obs in obs]
         ),
-        cls="striped"), style="font-size: 14px; margin: 0 auto"), style="text-align: center", id='listarobs')
+        cls="striped"), style="font-size: 14px; margin: 0 auto"),
+        Div(
+            Button("⬅️ Anterior", hx_target="#listarobs", hx_get=f"/obs/{pagina - 1}", href=f"/obs/{pagina - 1}", cls="btn") if pagina > 1 else "",
+            Button("➡️ Próximo", hx_target="#listarobs", hx_get=f"/obs/{pagina + 1}", cls="btn") if len(obs) > 1 else "",
+            style="margin-top: 20px; display: flex; gap: 10px;"
+        )
+        , style="text-align: center", id='listarobs')
+
+
