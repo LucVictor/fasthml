@@ -11,9 +11,12 @@ from cadastrarPessoas import formularioCadastrarPessoa
 from listarPessoas import listarPessoas
 from gerenciaritens import formAdicionarItens
 from impressaoObs import impressaoObs
-from procurarobs import formprocurarObs, listarObsProcurar
+from procurarobs import formprocurarObs, listarObsFiltro
+from index import home
 
-app,rt = fast_app(live=True, hdrs=(Style("""
+
+
+app,rt = fast_app(live=True, hdrs=(Script(src="https://cdn.jsdelivr.net/npm/chart.js"),Style("""
         @media print {
             .no-print {
                 display: none !important;
@@ -25,7 +28,7 @@ app,rt = fast_app(live=True, hdrs=(Style("""
 
 
 @rt('/')
-def get(): return layout()
+def get(): return layout(home())
 
 @rt('/editarobs')
 def editarObs(codigoobs: int, status: str):
@@ -144,7 +147,6 @@ def procurarobs():
 @rt('/resultadoprocurarobs')
 def resultadoprocurarobs(codigodocliente: str, data: str, status: str):
     obs = Obs.select()
-    print(codigodocliente, data, status)
     if codigodocliente:
         obs = obs.select().where(Obs.codigoCliente==codigodocliente)
     if data:
@@ -155,7 +157,7 @@ def resultadoprocurarobs(codigodocliente: str, data: str, status: str):
                 obs = obs.select().where(Obs.status == False)
             case 'True':
                 obs = obs.select().where(Obs.status == True)
-    return listarObsProcurar(obs)
+    return listarObsFiltro(obs)
 
 
 

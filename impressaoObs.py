@@ -12,5 +12,5 @@ def impressaoObs(id):
 
 def botaoImpressaoObs(i):
     return Div(Form(method="get", id='tela', hx_get=f'/impressaoobs/{i}', hx_target='#conteudo', hx_swap='InnerHTML')(
-        Button('Imprimir',type='submit', style='width: 95px;' ), style="display: flex; flex-direction: column; align-items: center;")
+        Button('Imprimir',type='submit', style='width: 100px;' ), style="display: flex; flex-direction: column; align-items: center;")
         , style='margin: 0 auto; text-align: center;')
