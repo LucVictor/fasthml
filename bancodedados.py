@@ -60,6 +60,13 @@ class Clientes(Model):
     class Meta:
         database = db
 
+class Usuarios(Model):
+    usuario = CharField(unique=True)
+    senha = CharField()
+    
+    class Meta:
+        database = db
+
 db.connect()
 
 
