@@ -14,7 +14,6 @@ from impressaoObs import impressaoObs
 from procurarobs import formprocurarObs, listarObsFiltro
 from index import home
 from logar import loginPagina
-import 
 
 app,rt = fast_app(live=True, session=True,  hdrs=(Script(src="https://cdn.jsdelivr.net/npm/chart.js"),Style("""
         @media print {
