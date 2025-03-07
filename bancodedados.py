@@ -1,7 +1,13 @@
 from peewee import *
+import os
 from datetime import date
 
-db = SqliteDatabase('banco.db')
+psql_db = PostgresqlDatabase(
+    'postgres',  # Required by Peewee.
+    user='postgres',  # Will be passed directly to psycopg2.
+    password='CnEFJCNi8HWF6tFMOfujqPoa5BV3ObhoQAMizr3AmOmvU8InFoRQeoKVPtnhUpMw',  # Ditto.
+    host='191.252.177.179',
+    port=3351)  # Ditto.
 
 
 class Produto(Model):
@@ -9,14 +15,14 @@ class Produto(Model):
     nome = CharField()
 
     class Meta:
-        database = db 
+        database = psql_db 
 
 class Pessoas(Model):
     nome = CharField()
     cargo = CharField()
 
     class Meta:
-        database = db 
+        database = psql_db
 
 class Obs(Model):
     codigo = AutoField()
@@ -32,7 +38,7 @@ class Obs(Model):
     ultimaAtualizacao = DateField()
 
     class Meta:
-        database = db
+        database = psql_db
 
 class Itens(Model):
     codigo = AutoField()
@@ -43,7 +49,7 @@ class Itens(Model):
     motivo = CharField()
 
     class Meta:
-        database = db
+        database = psql_db
 
 
 class Clientes(Model):
@@ -58,15 +64,15 @@ class Clientes(Model):
 
     
     class Meta:
-        database = db
+        database = psql_db
 
 class Usuarios(Model):
     usuario = CharField(unique=True)
     senha = CharField()
     
     class Meta:
-        database = db
+        database = psql_db
 
-db.connect()
+psql_db.connect()
 
 

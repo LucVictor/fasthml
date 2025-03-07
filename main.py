@@ -14,6 +14,11 @@ from impressaoObs import impressaoObs
 from procurarobs import formprocurarObs, listarObsFiltro
 from index import home
 from logar import loginPagina
+from verificarUsuario import login_requerido
+from listarUsuarios import listarUsuarios
+import os
+
+
 
 app,rt = fast_app(live=True, session=True,  hdrs=(Script(src="https://cdn.jsdelivr.net/npm/chart.js"),Style("""
         @media print {
@@ -30,8 +35,7 @@ def get(req: Request):
     return layout(home())
 
 @rt('/editarobs')
-@login_requerido
-def editarObs(codigoobs: int, status: str):
+def editarObs(codigoobs: int):
     obs = Obs.get_by_id(codigoobs)
     obs.status = bool(status)
     obs.save()
@@ -39,7 +43,6 @@ def editarObs(codigoobs: int, status: str):
 
 
 @rt('/adicionaritem')
-@login_requerido
 def adicionarItem(codigodoproduto: int, codigoobs: int, quantidade: int, status: str, motivo: str):
     produto = Produto.get(Produto.codigo == codigodoproduto)
     novo_item = Itens(nome = produto.nome, codigoObs= codigoobs, quantidade=quantidade, status=status, motivo=motivo )
@@ -48,13 +51,10 @@ def adicionarItem(codigodoproduto: int, codigoobs: int, quantidade: int, status:
     return mostrarItens(itens_lista)
 
 @rt('/gerenciaritens/{codigoobs}')
-@login_requerido
 def gerenciaritens(codigoobs: int):
     return formAdicionarItens(codigoobs)
 
-
 @rt('/removerItem/{id}')
-@login_requerido
 def removerItem(id: int):
     item = Itens.get(Itens.codigo == id)
     item.delete_instance()
@@ -62,7 +62,6 @@ def removerItem(id: int):
     return mostrarItens(itens_lista)
 
 @rt('/criarobs')
-@login_requerido
 def criarObs(codigoCliente: int):
     cliente = Clientes.get(Clientes.codigo == codigoCliente)
     pessoas = Pessoas.select()
@@ -71,36 +70,31 @@ def criarObs(codigoCliente: int):
     return procurarCliente()
 
 @rt('/cadastrarobs/')
-@login_requerido
 def cadastrarobs(motorista:str, Codigo_Cliente:int, picote:str, data:str, solicitante:str, numeroPedido:int ):
     print(motorista, Codigo_Cliente, picote, data, solicitante, numeroPedido)
     procurar_cliente = Clientes.get(Clientes.codigo == Codigo_Cliente)
     nova_obs = Obs(data = data, cliente=procurar_cliente.nome, codigoCliente=Codigo_Cliente, picote=picote, status=False, 
-    solicitante=solicitante, motorista=motorista, numeroPedido=numeroPedido, usuario='teste', ultimaAtualizacao=data)
+    solicitante=solicitante, motorista=motorista, numeroPedido=numeroPedido, usuario=req.session.get('usuario'), ultimaAtualizacao=data)
     nova_obs.save()
     return Redirect("/listaobs")
 
 
 @rt('/pessoas')
-@login_requerido
 def pessoas():
     listagem = Pessoas.select()
     return layout(listarPessoas(listagem))
 
 @rt('/cadastrarpessoas')
-@login_requerido
 def cadastrarPessoas():
     return layout(formularioCadastrarPessoa())
 
 @rt('/cadastrarpessoa')
-@login_requerido
 def cadastrarPessoa(nomePessoa: str, cargoPessoa: str):
     nova_pessoa = Pessoas(nome=nomePessoa, cargo=cargoPessoa)
     nova_pessoa.save()
     return formularioCadastrarPessoa()
 
 @rt('/deletarpessoa/{pessoaID}')
-@login_requerido
 def deletarpessoa(pessoaID: int):
     pessoa = Pessoas.get(Pessoas.id==pessoaID)
     if pessoa:
@@ -109,19 +103,41 @@ def deletarpessoa(pessoaID: int):
         return listarPessoas(listagem)
     return 'error'
 
+@rt('/usuarios')
+def listarUsuario():
+    usuarios = Usuarios.select()
+    return layout(listarUsuarios(usuarios))
+
+
+@rt('/cadastrarusuario')
+def listarUsuario(usuario: str, senha: str):
+    usuario = Usuarios(usuario = usuario, senha=senha)
+    usuario.save()
+    listagemusuarios = Usuarios.select()
+    return listarUsuarios(listagemusuarios)
+
+
+@rt('/deletarusuario/{id}')
+def deletarusuario(id: int):
+    print(id)
+    usuario = Usuarios.get(Usuarios.id== id)
+    usuario.delete_instance()
+    listagemusuarios = Usuarios.select()
+    return listarUsuarios(listagemusuarios)
+
+
 @rt('/procurarcliente')
 @login_requerido
-def procurarcliente():
+def procurarcliente(req: Request):
     return layout(procurarCliente())
 
 @rt('/verobs/{codigoobs}')
-@login_requerido
 def verobs(codigoobs: int):
     return visualizarObs(codigoobs)
 
 @rt('/listaobs')
 @login_requerido
-def listaObs():
+def listaObs(req: Request):
     pagina = 1
     por_pagina = 5
     offset = (pagina - 1) * por_pagina
@@ -149,13 +165,12 @@ def filtrarobs(opcao: str):
     return listarObs(filtro)
 
 @rt('/impressaoobs/{id}')
-@login_requerido
 def imprimirobs(id: int): 
     return impressaoObs(id)
 
 @rt('/procurarobs')
 @login_requerido
-def procurarobs():
+def procurarobs(req: Request):
     return layout(formprocurarObs())
 
 @rt('/resultadoprocurarobs')
