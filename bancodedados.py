@@ -3,12 +3,12 @@ import os
 from datetime import date
 
 psql_db = PostgresqlDatabase(
-    'postgres',  # Required by Peewee.
-    user='postgres',  # Will be passed directly to psycopg2.
-    password='CnEFJCNi8HWF6tFMOfujqPoa5BV3ObhoQAMizr3AmOmvU8InFoRQeoKVPtnhUpMw',  # Ditto.
-    host='191.252.177.179',
-    port=3351)  # Ditto.
-
+    os.environ.get("DB_NAME", "postgres"),      # Nome do banco (padrão: postgres)
+    user=os.environ.get("DB_USER", "postgres"),  # Usuário do banco
+    password=os.environ.get("DB_PASSWORD", ""),  # Senha do banco
+    host=os.environ.get("DB_HOST", "localhost"),  # IP do banco
+    port=int(os.environ.get("DB_PORT", 5432))  # Porta do banco (padrão: 5432)
+)
 
 class Produto(Model):
     codigo = IntegerField()
