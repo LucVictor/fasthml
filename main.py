@@ -210,4 +210,4 @@ def logout(req: Request):
     req.session.pop("usuario", None)  # 🔓 Remove o usuário da sessão
     return Redirect("/")
 
-serve(host="0.0.0.0", port=3000)
+serve(host="0.0.0.0", port=8000)
